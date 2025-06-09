@@ -20,7 +20,6 @@ from src.svr import svr_train_predict
 
 #1) IMPORTING DATA ----------------------------------------------------------------------
 
-#CODE HERE:
 
 data=pd.read_csv('data/stocks_data.csv')
 
@@ -29,7 +28,6 @@ df = pd.DataFrame(data)
 
 #2) EVALUATION FUNCTION -----------------------------------------------------------------
 
-#CODE HERE:
 def evaluate_model(model, stock, Y_test, Y_predictions):
     print(f"Evaluating {model} for {stock}...")
 
@@ -43,10 +41,10 @@ def evaluate_model(model, stock, Y_test, Y_predictions):
 
 #3) PREDICTING STOCK --------------------------------------------------------------------
 
-#CODE HERE:
 # Selecting a single stock with at least 1256 rows
 stock_counts = data["Name"].value_counts()
-selected_stock = stock_counts[stock_counts >= 1256].index[0]
+selected_stock = stock_counts[stock_counts >= 1256].index[1]# change index to select different stock
+# selected_stock = input("Enter the stock name to evaluate : ")
 print(f"Selected stock with at least 1256 entries: {selected_stock}")
 
 data = data[data["Name"] == selected_stock].iloc[:1256]
@@ -68,7 +66,7 @@ for stock in tqdm(stocks, desc="Processing stocks"):  # Progress bar for stock p
 
     # ---- Stock Data Preparation ----
 
-    #CODE HERE:
+    # Filter the data for the current stock
     stock_data = data[data['Name'] == stock]
 
     X=stock_data[features]
@@ -86,9 +84,9 @@ for stock in tqdm(stocks, desc="Processing stocks"):  # Progress bar for stock p
     
     # ---- LSTM Model ----
 
-    #CODE HERE:
+ 
     Y_predictions = lstm_train_predict(X_train, y_train, X_test_sorted)
-    mse, r2 = evaluate_model('LSTM', stock, y_test_sorted, Y_predictions)
+    r2, mse = evaluate_model('LSTM', stock, y_test_sorted, Y_predictions)
     
 
     results['lstm_r2'].append(r2)
@@ -110,7 +108,7 @@ for stock in tqdm(stocks, desc="Processing stocks"):  # Progress bar for stock p
 
     #CODE HERE:
     Y_predictions = randomForest_train_predict(X_train, y_train, X_test_sorted)
-    mse, r2 = evaluate_model('Random Forest', stock, y_test_sorted, Y_predictions)
+    r2, mse = evaluate_model('Random Forest', stock, y_test_sorted, Y_predictions)
 
 
     results['randomForest_r2'].append(r2)
@@ -132,7 +130,7 @@ for stock in tqdm(stocks, desc="Processing stocks"):  # Progress bar for stock p
 
     #CODE HERE:
     Y_predictions = svr_train_predict(X_train, y_train, X_test_sorted)
-    mse, r2 = evaluate_model('SVR', stock, y_test_sorted, Y_predictions)
+    r2, mse = evaluate_model('SVR', stock, y_test_sorted, Y_predictions)
 
 
     results['svr_r2'].append(r2)
